@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S. Thangaraja — IT Support Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #1e1e1e;
+    --accent: #00ff87;
+    --accent2: #ff6b35;
+    --text: #f0f0f0;
+    --muted: #555;
+    --card: #141414;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+    opacity: 0.5;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,135,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,135,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 4rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    animation: slideDown 0.8s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  @keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  .nav-links {
+    display: flex; gap: 2.5rem; list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+    text-transform: uppercase;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-status {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  .status-dot {
+    width: 7px; height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; z-index: 1;
+    padding: 8rem 4rem 4rem;
+    overflow: hidden;
+  }
+
+  .hero-inner {
+    max-width: 1000px;
+    width: 100%;
+  }
+
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+
+  .hero-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.55s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+
+  .hero-name span { color: var(--accent); }
+
+  .hero-arrow {
+    display: inline-flex; align-items: center; gap: 1.2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    color: var(--accent2);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+
+  .arrow-line {
+    width: 60px; height: 1px; background: var(--accent2);
+    position: relative; overflow: hidden;
+  }
+  .arrow-line::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--accent);
+    transform: translateX(-100%);
+    animation: shimmer 2s 1.5s infinite;
+  }
+  @keyframes shimmer {
+    to { transform: translateX(100%); }
+  }
+
+  .hero-bio {
+    max-width: 520px;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: #999;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.85s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+
+  .hero-actions {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 1s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.9rem 2rem;
+    border: 1px solid;
+    transition: all 0.3s;
+    display: inline-block;
+    cursor: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+  .btn-primary:hover { background: transparent; color: var(--accent); }
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-floater {
+    position: absolute;
+    right: 4rem; bottom: 6rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    writing-mode: vertical-rl;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.2s forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; }
+
+  .section-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 4rem;
+  }
+
+  .section-header {
+    display: flex; align-items: baseline; gap: 1.5rem;
+    margin-bottom: 4rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    letter-spacing: -0.02em;
+  }
+
+  /* SKILLS */
+  #skills { background: var(--surface); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .skill-block {
+    background: var(--card);
+    padding: 2rem;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-block::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 0;
+    background: var(--accent);
+    transition: height 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  .skill-block:hover { background: #1a1a1a; }
+  .skill-block:hover::before { height: 100%; }
+
+  .skill-cat {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .skill-list {
+    font-size: 0.92rem;
+    color: #bbb;
+    line-height: 2;
+    font-weight: 300;
+  }
+
+  /* EXPERIENCE */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  .exp-item {
+    padding-left: 2.5rem;
+    margin-bottom: 4rem;
+    position: relative;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.6s cubic-bezier(0.16,1,0.3,1);
+  }
+  .exp-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .exp-dot {
+    position: absolute;
+    left: -4px; top: 6px;
+    width: 9px; height: 9px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+  }
+
+  .exp-meta {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .exp-period {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  .exp-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--bg);
+    background: var(--accent2);
+    padding: 0.15rem 0.5rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .exp-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .exp-company {
+    font-size: 0.88rem;
+    color: #888;
+    margin-bottom: 1.2rem;
+  }
+
+  .exp-bullets {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 0.6rem;
+  }
+  .exp-bullets li {
+    font-size: 0.9rem;
+    color: #aaa;
+    padding-left: 1.2rem;
+    position: relative;
+    line-height: 1.6;
+  }
+  .exp-bullets li::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--accent);
+    font-size: 0.75rem;
+  }
+
+  /* INTERNSHIP */
+  .intern-card {
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    background: var(--card);
+    transition: border-color 0.3s;
+  }
+  .intern-card:hover { border-color: var(--accent); }
+  .intern-card::after {
+    content: 'INTERNSHIP';
+    position: absolute;
+    top: 1.5rem; right: 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--accent2);
+    letter-spacing: 0.2em;
+    border: 1px solid var(--accent2);
+    padding: 0.2rem 0.6rem;
+  }
+
+  /* CONTACT */
+  #contact { background: var(--surface); }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .contact-left h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 5vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+  .contact-left h2 span { color: var(--accent); }
+
+  .contact-left p {
+    color: #888;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+
+  .contact-items {
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .contact-item {
+    display: flex; align-items: center; gap: 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    color: #bbb;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    transition: all 0.3s;
+    text-decoration: none;
+    cursor: none;
+  }
+  .contact-item:hover { border-color: var(--accent); color: var(--accent); }
+  .contact-item-icon {
+    color: var(--accent);
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+  }
+
+  .edu-card {
+    border: 1px solid var(--border);
+    padding: 2rem;
+    background: var(--card);
+    transition: border-color 0.3s;
+  }
+  .edu-card:hover { border-color: var(--accent); }
+  .edu-degree {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+  }
+  .edu-school {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 0.3rem;
+  }
+  .edu-score {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+  }
+  .edu-stack { display: flex; flex-direction: column; gap: 1rem; }
+
+  /* FOOTER */
+  footer {
+    z-index: 1; position: relative;
+    border-top: 1px solid var(--border);
+    padding: 2rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  .footer-accent { color: var(--accent); }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.7s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Floating numbers */
+  .bg-num {
+    position: absolute;
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(8rem, 20vw, 18rem);
+    font-weight: 800;
+    color: rgba(0,255,135,0.025);
+    pointer-events: none;
+    line-height: 1;
+    user-select: none;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { display: none; }
+    #hero { padding: 6rem 1.5rem 3rem; }
+    .section-wrap { padding: 4rem 1.5rem; }
+    .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    .hero-floater { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">S.THANGARAJA</div>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    Open to opportunities
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="bg-num" style="right:-2rem;top:50%;transform:translateY(-50%)">4+</div>
+  <div class="hero-inner">
+    <div class="hero-tag">// IT Support Engineer</div>
+    <h1 class="hero-name">
+      S. <span>Thangaraja</span>
+    </h1>
+    <div class="hero-arrow">
+      <div class="arrow-line"></div>
+      Infrastructure × Code
+    </div>
+    <p class="hero-bio">
+      4+ years bridging systems and software — Windows/Linux administration, Azure AD, network infrastructure, and a growing stack, peripheral hardware Troubleshot, kernel drivers, and hardware verification.
+    </p>
+    <div class="hero-actions">
+      <a href="#experience" class="btn btn-primary">View Experience</a>
+      <a href="#contact" class="btn btn-outline">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-floater">Coimbatore · Tamil Nadu · India</div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-wrap">
+    <div class="section-header reveal">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Technical Skills</h2>
+    </div>
+    <div class="skills-grid reveal">
+      <div class="skill-block">
+        <div class="skill-cat">Languages</div>
+        <div class="skill-list">C, System Verilog<br>HTML and CSS, JavaScript <br>SQL</div>
+      </div>
+      <div class="skill-block">
+        <div class="skill-cat">Systems & Cloud</div>
+        <div class="skill-list">Windows Server · Linux(Ubuntu/RHEL)<br>macOS · Azure AD · Office 365  VMware</div>
+      </div>
+      <div class="skill-block">
+        <div class="skill-cat">Networking</div>
+        <div class="skill-list">LAN/WAN · DHCP · Static IP · FTP<br>P2P/PTMP · Switches · Routers <br> Security surveillance</div>
+      </div>
+      <div class="skill-block">
+        <div class="skill-cat">Tools & Hardware</div>
+        <div class="skill-list">SQL Server · Active Directory <br> LAUDEA(ITSD)  ·ERP · SAP <br> Biometric · Printer & Scanners</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-wrap">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Experience</h2>
+    </div>
+
+    <div class="timeline">
+
+      <div class="exp-item">
+        <div class="exp-dot"></div>
+        <div class="exp-meta">
+          <span class="exp-period">Jan 2025 – Present</span>
+          <span class="exp-badge">Current</span>
+        </div>
+        <div class="exp-title">IT Support Engineer</div>
+        <div class="exp-company">PSG Industrial Institute, Coimbatore</div>
+        <ul class="exp-bullets">
+          <li>Integrated Windows, Linux, macOS, Azure, Office 365, and VMware into enterprise infrastructure for 200+ end users.</li>
+          <li>Customised LAUDEA ticketing with 12+ workflows and SLA rules — improving first-response compliance for 40+ user base.</li>
+          <li>Managed Azure Active Directory — user accounts, security groups, and access control across all departments.</li>
+          <li>Led system migrations, OS deployments, and infrastructure upgrades with zero unplanned downtime.</li>
+        </ul>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-dot"></div>
+        <div class="exp-meta">
+          <span class="exp-period">Oct 2023 – Jan 2025</span>
+        </div>
+        <div class="exp-title">Network Field Engineer</div>
+        <div class="exp-company">World Wide Communications, Coimbatore</div>
+        <ul class="exp-bullets">
+          <li>Executed Tata Communications networking projects — P2P, PTMP, hub, and client-side deployments with site surveys.</li>
+          <li>Installed and configured switches, routers, BTS equipment, and Radwin/Cambium sector devices.</li>
+          <li>Reduced deployment cycle time via structured pre-commissioning checklists for end-to-end migration setups.</li>
+        </ul>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-dot"></div>
+        <div class="exp-meta">
+          <span class="exp-period">Oct 2022 – Oct 2023</span>
+        </div>
+        <div class="exp-title">Graduate Apprenticeship Trainee</div>
+        <div class="exp-company">BSNL Telecom Factory, Tirunelveli</div>
+        <ul class="exp-bullets">
+          <li>Trained in domestic telecom configuration using full-duplex methods; hands-on Embedded C and cloud fundamentals.</li>
+          <li>Delivered customer service across retail and Sales & Marketing — multitasking technical and business functions.</li>
+        </ul>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-dot"></div>
+        <div class="exp-meta">
+          <span class="exp-period">Mar 2021 – Sep 2022</span>
+        </div>
+        <div class="exp-title">Technical Support Engineer</div>
+        <div class="exp-company">Zion Data Production, Thoothukudi</div>
+        <ul class="exp-bullets">
+          <li>Resolved 50+ monthly incidents across Windows, Linux, and macOS — maintaining high SLA adherence.</li>
+          <li>Troubleshot DHCP, Static IP, FTP, LAN/WAN, and CCTV systems; improved server uptime by 15%.</li>
+          <li>Supported printers, biometric devices, billing software, ERP systems, and 2D/3D scanners.</li>
+        </ul>
+      </div>
+
+      <!-- Internship -->
+      <div class="exp-item" style="margin-bottom:0;">
+        <div class="exp-dot" style="background:var(--accent2);"></div>
+        <div class="intern-card">
+          <div class="exp-meta">
+            <span class="exp-period" style="color:var(--accent2);">184 Days</span>
+          </div>
+          <div class="exp-title">Hardware Verification Intern</div>
+          <div class="exp-company">Maxvy Technologies</div>
+          <ul class="exp-bullets">
+            <li>Designed and verified I²C, XSPI, SPI, and SPD5 protocols using Verilog HDL — reusable testbenches reducing cycle time.</li>
+            <li>Developed Linux kernel device drivers in C for hardware–software integration on custom embedded peripherals.</li>
+            <li>Built automated verification pipelines using cocotb (Python-based), cutting manual testing effort significantly.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-wrap">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Contact & Education</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-left reveal">
+        <h2>Let's build<br><span>something.</span></h2>
+        <p>Open to IT Engineer roles where infrastructure experience and growing programming skills can both contribute.</p>
+        <div class="contact-items">
+          <a href="tel:+917548800851" class="contact-item">
+            <span class="contact-item-icon">✆</span>
+            +91 75488 00851
+          </a>
+          <a href="mailto:thangaraja1569@gmail.com" class="contact-item">
+            <span class="contact-item-icon">@</span>
+            thangaraja1569@gmail.com
+          </a>
+		  <a href="https://github.com/STR2203" class="contact-item">
+            <span class="contact-item-icon">⇛</span>
+            github-Update this link
+          </a>
+          <div class="contact-item">
+            <span class="contact-item-icon">⌖</span>
+            Coimbatore, Tamil Nadu, India
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <div style="margin-bottom:1rem;font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;">Education</div>
+        <div class="edu-stack">
+          <div class="edu-card">
+            <div class="edu-degree">B.E. Computer Science & Engineering</div>
+            <div class="edu-school">St. Mother Teresa Engineering College · Anna University</div>
+            <div class="edu-score">CGPA: 7.54 / 10 · 2021</div>
+          </div>
+          <div class="edu-card">
+            <div class="edu-degree">HSC</div>
+            <div class="edu-school">Government Higher Secondary School</div>
+            <div class="edu-score">75.5 / 100</div>
+          </div>
+          <div class="edu-card">
+            <div class="edu-degree">SSLC</div>
+            <div class="edu-school">Government Higher Secondary School</div>
+            <div class="edu-score">79.5 / 100</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-text">© 2025 <span class="footer-accent">S. Thangaraja</span></div>
+  <div class="footer-text">Tamil (Native) · English (Professional)</div>
+  <div class="footer-text">Travelling · Video Editing · Continuous Skill Development</div>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  document.querySelectorAll('a, button, .skill-block, .contact-item, .exp-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(2.5)';
+      ring.style.opacity = '0.8';
+      ring.style.transform = 'translate(-50%,-50%) scale(1.4)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+      ring.style.opacity = '0.5';
+      ring.style.transform = 'translate(-50%,-50%) scale(1)';
+    });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal, .exp-item').forEach(el => observer.observe(el));
+
+  // Stagger exp items
+  document.querySelectorAll('.exp-item').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.08}s`;
+  });
+</script>
+</body>
+</html>
